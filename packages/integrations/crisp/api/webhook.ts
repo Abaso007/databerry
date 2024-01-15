@@ -187,6 +187,12 @@ const handleQuery = async (
   query: string,
   t: TFunction<'translation', undefined>
 ) => {
+  console.log('HANDLE QUERY ARGS ------------------------>', {
+    websiteId,
+    sessionId,
+    visitorId,
+    query,
+  });
   const integration = await getIntegration(websiteId);
   const agent = integration?.agents?.[0];
 
@@ -217,6 +223,13 @@ const handleQuery = async (
   });
 
   const conversationId = conversation?.id || cuid();
+
+  console.log('new ConversationManager -------------_>', {
+    conversationId,
+    agentId: agent?.id,
+    organizationId: agent?.organizationId!,
+    messages: conversation?.messages,
+  });
 
   const conversationManager = new ConversationManager({
     organizationId: agent?.organizationId!,
