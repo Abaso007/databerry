@@ -183,16 +183,9 @@ const getIntegration = async (websiteId: string) => {
 const handleQuery = async (
   websiteId: string,
   sessionId: string,
-  visitorId: string,
   query: string,
   t: TFunction<'translation', undefined>
 ) => {
-  console.log('HANDLE QUERY ARGS ------------------------>', {
-    websiteId,
-    sessionId,
-    visitorId,
-    query,
-  });
   const integration = await getIntegration(websiteId);
   const agent = integration?.agents?.[0];
 
@@ -224,13 +217,6 @@ const handleQuery = async (
 
   const conversationId = conversation?.id || cuid();
 
-  console.log('new ConversationManager -------------_>', {
-    conversationId,
-    agentId: agent?.id,
-    organizationId: agent?.organizationId!,
-    messages: conversation?.messages,
-  });
-
   const conversationManager = new ConversationManager({
     organizationId: agent?.organizationId!,
     channel: ConversationChannel.crisp,
@@ -244,7 +230,7 @@ const handleQuery = async (
     from: MessageFrom.human,
     text: query,
 
-    externalVisitorId: visitorId,
+    externalVisitorId: sessionId,
   });
 
   const { answer, sources } = await new AgentManager({ agent }).query({
@@ -382,7 +368,6 @@ export const hook = async (req: AppNextApiRequest, res: NextApiResponse) => {
             await handleQuery(
               body.website_id,
               body.data.session_id,
-              body.data.visitorId,
               body.data.content,
               t
             );
